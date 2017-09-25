@@ -43,10 +43,13 @@ def main():
     cursor.execute('''CREATE TABLE IF NOT EXISTS COINMARKET
             (COIN_NAME STR,
             COIN_PRICE REAL,
-            DAY_CHANGE REAL);''')
+            DAY_CHANGE REAL,
+            DATE UNIX);''')
     doge_name = dogecoin.coin_name()
     bit_name = bitcoin.coin_name()
     while True:
+        unix = time.time()
+        date = str(datetime.datetime.fromtimestamp(unix).strftime('%Y-%m-%d %H:%M:%S'))
         bit_price = float(bitcoin.price())
         doge_price = float(dogecoin.price())
         doge_name = dogecoin.coin_name()
@@ -54,12 +57,12 @@ def main():
         doge_one_day = float(dogecoin.percent_change_one_day())
         doge_one_week = dogecoin.percent_change_one_week()
         bitcoin_one_day = float(bitcoin.percent_change_one_day())
-        cursor.execute("INSERT INTO COINMARKET (COIN_NAME ,COIN_PRICE, DAY_CHANGE)\
-                VALUES (?, ?, ? )",(doge_name, doge_price, doge_one_day ))
-        cursor.execute("INSERT INTO COINMARKET (COIN_NAME, COIN_PRICE, DAY_CHANGE)\
-                VALUES (?, ?, ?)",(bit_name, bit_price, bitcoin_one_day))
+        cursor.execute("INSERT INTO COINMARKET (COIN_NAME ,COIN_PRICE, DAY_CHANGE, DATE)\
+                VALUES (?, ?, ?, ?)",(doge_name, doge_price, doge_one_day, date))
+        cursor.execute("INSERT INTO COINMARKET (COIN_NAME, COIN_PRICE, DAY_CHANGE, DATE)\
+                VALUES (?, ?, ?, ?)",(bit_name, bit_price, bitcoin_one_day, date))
         currency_db.commit()
 
-        time.sleep(60)
+        time.sleep(300)
 if __name__ == '__main__':
     main()
